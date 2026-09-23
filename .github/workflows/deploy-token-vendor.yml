@@ -32,6 +32,7 @@ jobs:
           corepack yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia
       - name: Publish completed repository
         run: |
+          rm -rf .github
           git add -A
           git commit -m "feat: complete and deploy token vendor"
           git push
