@@ -19,4 +19,4 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.SEPOLIA_DEPLOYER_PRIVATE_KEY }}
         run: |
-          yarn workspace @se-2/hardhat tsx -e 'import { Wallet, JsonRpcProvider, parseEther } from "ethers"; const provider = new JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/IZYEU2cWBgnFmgiTAgpWD"); const wallet = new Wallet(process.env.PRIVATE_KEY, provider); const tx = await wallet.sendTransaction({ to: "0x360719084082b784056FeA5bbe8DF6718E71154e", value: parseEther("0.002") }); console.log("Transaction:", tx.hash); await tx.wait(); console.log("Funded RiggedRoll");'
+          yarn workspace @se-2/hardhat tsx -e 'import { Wallet, JsonRpcProvider, parseEther } from "ethers"; (async () => { const provider = new JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/IZYEU2cWBgnFmgiTAgpWD"); const wallet = new Wallet(process.env.PRIVATE_KEY, provider); const tx = await wallet.sendTransaction({ to: "0x360719084082b784056FeA5bbe8DF6718E71154e", value: parseEther("0.002") }); console.log("Transaction:", tx.hash); await tx.wait(); console.log("Funded RiggedRoll"); })().catch(error => { console.error(error); process.exit(1); });'
