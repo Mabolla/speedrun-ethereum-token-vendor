@@ -3,7 +3,7 @@ name: Import Token Vendor source
 on:
   push:
     paths:
-      - token-vendor-source.tar.gz
+      - token-vendor-source.zip
 
 permissions:
   contents: write
@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Expand source and clean temporary files
         run: |
-          tar -xzf token-vendor-source.tar.gz
-          rm token-vendor-source.tar.gz
+          unzip -q token-vendor-source.zip
+          rm token-vendor-source.zip
           rm .github/workflows/import-source.yml
       - name: Commit project
         run: |
