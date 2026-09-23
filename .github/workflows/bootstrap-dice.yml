@@ -1,0 +1,102 @@
+name: Bootstrap and deploy Dice Game
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/bootstrap-dice.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Add official Dice Game extension
+        run: |
+          git clone --depth 1 --branch challenge-dice-game https://github.com/scaffold-eth/se-2-challenges.git /tmp/dice
+          rm -f packages/hardhat/contracts/Vendor.sol packages/hardhat/contracts/YourToken.sol
+          rm -f packages/hardhat/deploy/00_deploy_your_token.ts packages/hardhat/deploy/01_deploy_vendor.ts
+          cp /tmp/dice/extension/packages/hardhat/contracts/*.sol packages/hardhat/contracts/
+          cp /tmp/dice/extension/packages/hardhat/deploy/*.ts packages/hardhat/deploy/
+          cp /tmp/dice/extension/packages/hardhat/test/RiggedRoll.ts packages/hardhat/test/
+          mkdir -p packages/nextjs/app/dice packages/nextjs/public/rolls
+          cp -a /tmp/dice/extension/packages/nextjs/app/dice/. packages/nextjs/app/dice/
+          cp -a /tmp/dice/extension/packages/nextjs/public/rolls/. packages/nextjs/public/rolls/
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('packages/hardhat/contracts/RiggedRoll.sol')
+          s=p.read_text()
+          s=s.replace('// Errors go here...', '''error NotEnoughETH(uint256 required, uint256 available);
+              error NotWinningRoll(uint256 roll);
+              error InsufficientBalance(uint256 requested, uint256 available);''')
+          s=s.replace('// Functions go here...', '''receive() external payable {}
+
+              function riggedRoll() external {
+                  uint256 rollPrice = 0.002 ether;
+                  uint256 balance = address(this).balance;
+                  if (balance < rollPrice) revert NotEnoughETH(rollPrice, balance);
+                  bytes32 hash = keccak256(abi.encodePacked(blockhash(block.number - 1), address(diceGame), diceGame.nonce()));
+                  uint256 roll = uint256(hash) % 16;
+                  if (roll > 5) revert NotWinningRoll(roll);
+                  diceGame.rollTheDice{value: rollPrice}();
+              }
+
+              function withdraw(address payable _addr, uint256 _amount) external onlyOwner {
+                  uint256 balance = address(this).balance;
+                  if (_amount > balance) revert InsufficientBalance(_amount, balance);
+                  (bool sent, ) = _addr.call{value: _amount}("");
+                  require(sent, "Failed to send Ether");
+              }''')
+          p.write_text(s)
+          p=Path('packages/hardhat/deploy/00_deploy_diceGame.ts')
+          p.write_text(p.read_text().replace('parseEther("0.05")','parseEther("0.005")'))
+          p=Path('packages/hardhat/deploy/01_deploy_riggedRoll.ts')
+          s=p.read_text().replace('import { deployScript }','import { artifacts, deployScript }')
+          start=s.index('    // Uncomment to deploy RiggedRoll contract')
+          end=s.index('    void diceGameAddress;')+len('    void diceGameAddress;')
+          block='''    const riggedRoll = await env.deploy("RiggedRoll", {
+                account: env.namedAccounts.deployer,
+                artifact: artifacts.RiggedRoll,
+                args: [diceGameAddress],
+              });
+
+              await env.execute(riggedRoll, {
+                functionName: "transferOwnership",
+                args: ["0x94705A9d675daa924F9190Eca4c05ED6B12d5345"],
+                account: env.namedAccounts.deployer,
+              });'''
+          p.write_text(s[:start]+block+s[end:])
+          p=Path('packages/nextjs/app/dice/page.tsx')
+          s=p.read_text().replace('{/* <button','<button').replace('</button> */}','</button>')
+          p.write_text(s)
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/hardhat packages/nextjs/app/dice packages/nextjs/public/rolls
+          git commit -m "feat: add completed Dice Game challenge"
+          git push
+      - run: corepack enable
+      - run: yarn install --immutable
+      - name: Test Dice Game
+        run: |
+          yarn hardhat:chain >/tmp/node.log 2>&1 &
+          sleep 3
+          yarn workspace @se-2/hardhat hardhat test test/RiggedRoll.ts
+      - name: Deploy to Sepolia
+        env:
+          __RUNTIME_DEPLOYER_PRIVATE_KEY: ${{ secrets.SEPOLIA_DEPLOYER_PRIVATE_KEY }}
+        run: |
+          yarn hardhat:compile
+          yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia
+          yarn hardhat:verify --network sepolia
+      - name: Save Sepolia artifacts
+        run: |
+          git add packages/hardhat/deployments packages/nextjs/contracts/deployedContracts.ts
+          git commit -m "chore: save Dice Game Sepolia deployment"
+          git push
