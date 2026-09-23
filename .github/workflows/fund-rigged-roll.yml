@@ -1,0 +1,22 @@
+name: Fund RiggedRoll
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/fund-rigged-roll.yml]
+
+jobs:
+  fund:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: yarn install --immutable
+      - name: Send 0.002 Sepolia ETH
+        env:
+          PRIVATE_KEY: ${{ secrets.SEPOLIA_DEPLOYER_PRIVATE_KEY }}
+        run: |
+          yarn workspace @se-2/hardhat tsx -e 'import { Wallet, JsonRpcProvider, parseEther } from "ethers"; const provider = new JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/IZYEU2cWBgnFmgiTAgpWD"); const wallet = new Wallet(process.env.PRIVATE_KEY, provider); const tx = await wallet.sendTransaction({ to: "0x360719084082b784056FeA5bbe8DF6718E71154e", value: parseEther("0.002") }); console.log("Transaction:", tx.hash); await tx.wait(); console.log("Funded RiggedRoll");'
