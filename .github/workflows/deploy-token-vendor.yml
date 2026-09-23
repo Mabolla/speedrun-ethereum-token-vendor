@@ -28,6 +28,7 @@ jobs:
         env:
           __RUNTIME_DEPLOYER_PRIVATE_KEY: ${{ secrets.SEPOLIA_DEPLOYER_PRIVATE_KEY }}
         run: |
+          sed -i "s#https://eth-sepolia.g.alchemy.com/v2/\${providerApiKey}#https://ethereum-sepolia-rpc.publicnode.com#" packages/hardhat/hardhat.config.ts
           corepack yarn workspace @se-2/hardhat hardhat compile
           corepack yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia
       - name: Publish completed repository
