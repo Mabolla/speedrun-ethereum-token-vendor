@@ -3,7 +3,7 @@ name: Import Token Vendor source
 on:
   push:
     paths:
-      - token-vendor-source.b64.txt
+      - source-import.ready
 
 permissions:
   contents: write
@@ -13,11 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Decode and expand source
+      - name: Reassemble and expand source
         run: |
+          cat token-vendor-source.b64.part-* > token-vendor-source.b64.txt
           base64 -d token-vendor-source.b64.txt > token-vendor-source.zip
           unzip -q token-vendor-source.zip
-          rm token-vendor-source.b64.txt token-vendor-source.zip
+          rm token-vendor-source.b64.part-* token-vendor-source.b64.txt token-vendor-source.zip source-import.ready
           rm .github/workflows/import-source.yml
       - name: Commit project
         run: |
