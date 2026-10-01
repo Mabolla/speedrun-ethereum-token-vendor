@@ -11,6 +11,7 @@ on:
       - packages/hardhat/contracts/utils/StatisticsUtils.sol
       - packages/hardhat/deploy/03_deploy_oracles.ts
       - packages/hardhat/test/*Oracle*.ts
+      - packages/hardhat/scripts/checkOracleVerification.ts
 
 permissions:
   contents: write
@@ -50,4 +51,6 @@ jobs:
             git push
           fi
       - name: Verify Sepolia source on Etherscan
-        run: yarn hardhat:verify --network sepolia
+        run: yarn hardhat:verify --network sepolia --min-interval 1500
+      - name: Confirm all oracle sources and ABIs are verified
+        run: yarn workspace @se-2/hardhat tsx scripts/checkOracleVerification.ts
