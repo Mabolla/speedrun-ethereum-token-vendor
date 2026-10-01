@@ -22,6 +22,7 @@ on:
       - packages/hardhat/hardhat.config.ts
       - packages/hardhat/package.json
       - packages/hardhat/scripts/checkOracleVerification.ts
+      - packages/hardhat/scripts/prepareVerificationMetadata.ts
       - yarn.lock
 
 permissions:
@@ -56,6 +57,8 @@ jobs:
           yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia --tags PredictionMarkets
           yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia --tags ZKVoting
           yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia --tags WrappedETH
+      - name: Embed compiler sources in verification metadata
+        run: yarn workspace @se-2/hardhat node --import tsx scripts/prepareVerificationMetadata.ts PredictionMarket PredictionMarketTokenYes PredictionMarketTokenNo PoseidonT3 LeanIMT HonkVerifier Voting WrappedETH
       - name: Save deployment addresses and frontend ABIs
         run: |
           git config user.name github-actions[bot]
@@ -66,8 +69,6 @@ jobs:
             git push
           fi
       - name: Verify Sepolia source on Etherscan
-        run: |
-          yarn hardhat:verify --network sepolia --min-interval 1500
-          yarn hardhat:verify --network sepolia --min-interval 1500 --license None
+        run: yarn hardhat:verify --network sepolia --min-interval 1500
       - name: Confirm verified names, ABIs and canonical grader source paths
         run: yarn workspace @se-2/hardhat node --import tsx scripts/checkOracleVerification.ts PredictionMarket PredictionMarketTokenYes PredictionMarketTokenNo PoseidonT3 LeanIMT HonkVerifier Voting WrappedETH
