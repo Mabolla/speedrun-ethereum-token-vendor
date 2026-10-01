@@ -47,6 +47,21 @@ export const menuLinks: HeaderMenuLink[] = [
     icon: <CircleStackIcon className="h-4 w-4" />,
   },
   {
+    label: "Prediction Markets",
+    href: "/prediction-markets",
+    icon: <CircleStackIcon className="h-4 w-4" />,
+  },
+  {
+    label: "ZK Voting",
+    href: "/zk-voting",
+    icon: <BoltIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Wrapped ETH",
+    href: "/wrapped-eth",
+    icon: <CircleStackIcon className="h-4 w-4" />,
+  },
+  {
     label: "Events",
     href: "/events",
     icon: <BoltIcon className="h-4 w-4" />,
@@ -100,7 +115,7 @@ export const Header = () => {
     <div className="sticky lg:static top-0 navbar bg-base-100 min-h-16 shrink-0 justify-between z-20 border-b-2 border-base-300 p-0 sm:px-2">
       <div className="navbar-start w-auto self-stretch">
         <details className="dropdown" ref={burgerMenuRef}>
-          <summary className="ml-1 btn btn-ghost 2xl:hidden hover:bg-transparent">
+          <summary className="ml-1 btn btn-ghost hover:bg-transparent">
             <Bars3Icon className="h-1/2" />
           </summary>
           <ul
@@ -112,7 +127,7 @@ export const Header = () => {
             <HeaderMenuLinks />
           </ul>
         </details>
-        <Link href="/" passHref className="hidden 2xl:flex items-center gap-2 ml-4 mr-6 shrink-0">
+        <Link href="/" passHref className="flex items-center gap-2 ml-4 mr-6 shrink-0">
           <div className="flex relative w-10 h-10">
             <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
           </div>
@@ -121,9 +136,6 @@ export const Header = () => {
             <span className="text-xs">Token Vendor</span>
           </div>
         </Link>
-        <ul className="hidden 2xl:flex 2xl:flex-nowrap h-full m-0 p-0 list-none">
-          <HeaderMenuLinks />
-        </ul>
       </div>
       <div className="navbar-end grow mr-4">
         <RainbowKitCustomConnectButton />
