@@ -2154,7 +2154,7 @@ const deployedContracts = {
       deployedOnBlock: 11824299,
     },
     MyUSD: {
-      address: "0x8826659f9163dba028a8cd79f13283402eb3d1ea",
+      address: "0x19077a68cbf69109e06c02f21d56bb5f54b49318",
       abi: [
         {
           inputs: [
@@ -2667,10 +2667,10 @@ const deployedContracts = {
         renounceOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
         transferOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
       },
-      deployedOnBlock: 11824457,
+      deployedOnBlock: 11824587,
     },
     MyUSDEngine: {
-      address: "0x3287a679b857e2c689fb341d675542cc2124c019",
+      address: "0xb851a636f900c9f113e5803094cd8e4257e398a0",
       abi: [
         {
           inputs: [
@@ -3216,10 +3216,10 @@ const deployedContracts = {
         renounceOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
         transferOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
       },
-      deployedOnBlock: 11824463,
+      deployedOnBlock: 11824591,
     },
     MyUSDStaking: {
-      address: "0x1ceebd82bc6827bc3c4e2af96842b6ebf78276ce",
+      address: "0x14c4799a8ab4734ba933231134e26c4b36419912",
       abi: [
         {
           inputs: [
@@ -3598,7 +3598,7 @@ const deployedContracts = {
         renounceOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
         transferOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
       },
-      deployedOnBlock: 11824461,
+      deployedOnBlock: 11824590,
     },
     ORA: {
       address: "0xb1468b52a62fc8e2b847a98f6cf0705be6cc2965",
@@ -4771,7 +4771,7 @@ const deployedContracts = {
       deployedOnBlock: 11823983,
     },
     Oracle: {
-      address: "0x432de8c2104ca1057de72985f5592ca555db01e3",
+      address: "0x9ca3a26c1fcb7dd75637ae1f5cd5b8efcbdc2c9e",
       abi: [
         {
           inputs: [
@@ -4843,10 +4843,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11824460,
+      deployedOnBlock: 11824589,
     },
     RateController: {
-      address: "0x3fec454810b9482612193ade949977f497cb78d7",
+      address: "0xee70ff986151eceec710b7c19a241767fb924b4f",
       abi: [
         {
           inputs: [
@@ -4902,7 +4902,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11824456,
+      deployedOnBlock: 11824586,
     },
     RiggedRoll: {
       address: "0x360719084082b784056fea5bbe8df6718e71154e",
@@ -5086,7 +5086,7 @@ const deployedContracts = {
       deployedOnBlock: 11766375,
     },
     StableDEX: {
-      address: "0xc6aff307ab0eb713d65b1b67b4d909dd5d55dd34",
+      address: "0x5a3ce239649d4b022977f94fdb16030a599cfac0",
       abi: [
         {
           inputs: [
@@ -5391,7 +5391,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11824459,
+      deployedOnBlock: 11824588,
     },
     StakingOracle: {
       address: "0x6f1aa5faf132b7652ada2ec677718f7bc2bb1ef8",

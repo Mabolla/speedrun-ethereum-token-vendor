@@ -1,5 +1,5 @@
 {
-  "address": "0xc6aff307ab0eb713d65b1b67b4d909dd5d55dd34",
+  "address": "0x5a3ce239649d4b022977f94fdb16030a599cfac0",
   "abi": [
     {
       "inputs": [
@@ -353,7 +353,7 @@
   "storageLayout": {
     "storage": [
       {
-        "astId": 17960,
+        "astId": 19675,
         "contract": "project/contracts/stablecoins/DEX.sol:DEX",
         "label": "token",
         "offset": 0,
@@ -361,7 +361,7 @@
         "type": "t_contract(IERC20)877"
       },
       {
-        "astId": 17962,
+        "astId": 19677,
         "contract": "project/contracts/stablecoins/DEX.sol:DEX",
         "label": "totalLiquidity",
         "offset": 0,
@@ -369,7 +369,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 17966,
+        "astId": 19681,
         "contract": "project/contracts/stablecoins/DEX.sol:DEX",
         "label": "liquidity",
         "offset": 0,
@@ -438,15 +438,15 @@
     "notice": "Simple DEX contract that allows users to swap ETH for MyUSD and MyUSD for ETH",
     "version": 1
   },
-  "argsData": "0x0000000000000000000000008826659f9163dba028a8cd79f13283402eb3d1ea",
+  "argsData": "0x00000000000000000000000019077a68cbf69109e06c02f21d56bb5f54b49318",
   "transaction": {
-    "hash": "0x49407ac357595633152d6967c9783d9c797daf06de8127cc3db1042779181413",
-    "nonce": "0x30",
+    "hash": "0x9e9ed4cddf256a0a097f3573dc7b3ef53ce8a4560cae9197b43cb4f1b17a5503",
+    "nonce": "0x3b",
     "origin": "0xb6038ce7a6b8666156d79317b02f56d1cd29ad07"
   },
   "receipt": {
-    "blockHash": "0xad32bd667e4e3183b22bd370c1ecc455f206612831fec4a2db1bc0b36d3516ca",
-    "blockNumber": "0xb46d4b",
-    "transactionIndex": "0x50"
+    "blockHash": "0xbe176742df8a6bd886ed9a772382954c0c000afd83147ff5fe6d94c2bae8ddea",
+    "blockNumber": "0xb46dcc",
+    "transactionIndex": "0x68"
   }
 }
