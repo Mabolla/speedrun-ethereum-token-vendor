@@ -3,7 +3,10 @@ import { readFile } from "node:fs/promises";
 import { setTimeout as delay } from "node:timers/promises";
 import { etherscanApiKey } from "../hardhat.config.js";
 
-const DEPLOYMENT_NAMES = ["WhitelistOracle", "ORA", "StakingOracle", "OptimisticOracle", "Decider"];
+const DEPLOYMENT_NAMES =
+  process.argv.length > 2
+    ? process.argv.slice(2)
+    : ["WhitelistOracle", "ORA", "StakingOracle", "OptimisticOracle", "Decider"];
 const REQUEST_INTERVAL_MS = 1500;
 const MAX_ATTEMPTS = 5;
 
