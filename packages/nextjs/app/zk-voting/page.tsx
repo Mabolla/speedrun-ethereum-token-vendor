@@ -138,7 +138,7 @@ const ZkVoting = () => {
       const registration =
         identity?.registrationAddress.toLowerCase() === address.toLowerCase()
           ? identity
-          : createIdentity(deployment.address as `0x${string}`, address);
+          : createIdentity(deployment.address as `0x${string}`, address as `0x${string}`);
       // Save before requesting the transaction, so a page close never loses the registered secret.
       saveIdentity(registration);
       setIdentity(registration);

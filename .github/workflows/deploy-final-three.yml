@@ -66,6 +66,8 @@ jobs:
             git push
           fi
       - name: Verify Sepolia source on Etherscan
-        run: yarn hardhat:verify --network sepolia --min-interval 1500
+        run: |
+          yarn hardhat:verify --network sepolia --min-interval 1500
+          yarn hardhat:verify --network sepolia --min-interval 1500 --license None
       - name: Confirm verified names, ABIs and canonical grader source paths
         run: yarn workspace @se-2/hardhat node --import tsx scripts/checkOracleVerification.ts PredictionMarket PredictionMarketTokenYes PredictionMarketTokenNo PoseidonT3 LeanIMT HonkVerifier Voting WrappedETH

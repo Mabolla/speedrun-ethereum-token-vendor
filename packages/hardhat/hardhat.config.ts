@@ -59,6 +59,14 @@ export default defineConfig({
           viaIR: true,
         },
       },
+      "contracts/PredictionMarketToken.sol": {
+        version: "0.8.20",
+        path: process.env.SOLC_COMPILER_PATH,
+        settings: {
+          optimizer: { enabled: true, runs: 200 },
+          viaIR: true,
+        },
+      },
       "contracts/Voting.sol": zkCompiler,
       "contracts/Verifier.sol": zkCompiler,
       "contracts/mocks/VerifierMock.sol": zkCompiler,
