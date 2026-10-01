@@ -14,30 +14,34 @@ export default function TokenActions() {
   const [busy, setBusy] = useState(false);
   const { address, chainId, isConnected } = useAccount();
   const { data: dex } = useDeployedContractInfo({ contractName: "CornDEX", chainId: LENDING_CHAIN_ID });
-  const { data: cornBalance } = useScaffoldReadContract({
+  const { data: cornBalance, error: cornBalanceError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "balanceOf",
     args: [address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: cornReserve } = useScaffoldReadContract({
+  const { data: cornReserve, error: cornReserveError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "balanceOf",
     args: [dex?.address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: allowance } = useScaffoldReadContract({
+  const { data: allowance, error: allowanceError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "allowance",
     args: [address, dex?.address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: ethReserve } = useBalance({
+  const { data: ethReserve, error: ethReserveError } = useBalance({
     address: dex?.address,
     chainId: LENDING_CHAIN_ID,
     query: { refetchInterval: 3000 },
   });
-  const { data: walletEth } = useBalance({ address, chainId: LENDING_CHAIN_ID, query: { refetchInterval: 3000 } });
+  const { data: walletEth, error: walletEthError } = useBalance({
+    address,
+    chainId: LENDING_CHAIN_ID,
+    query: { refetchInterval: 3000 },
+  });
   const { writeContractAsync: writeCorn } = useScaffoldWriteContract({
     contractName: "Corn",
     chainId: LENDING_CHAIN_ID,
@@ -49,14 +53,18 @@ export default function TokenActions() {
   const swapAmount = parsePositiveAmount(swapInput);
   const transferAmount = parsePositiveAmount(transferInput);
   const canTransact = isConnected && chainId === LENDING_CHAIN_ID && !busy;
+  const poolError = Boolean(cornReserveError || ethReserveError);
+  const swapError =
+    poolError || (sellToken === "ETH" ? Boolean(walletEthError) : Boolean(cornBalanceError || allowanceError));
   const inputReserve = sellToken === "ETH" ? ethReserve?.value : cornReserve;
   const outputReserve = sellToken === "ETH" ? cornReserve : ethReserve?.value;
   const quote =
-    swapAmount !== undefined && inputReserve !== undefined && outputReserve !== undefined
+    !poolError && swapAmount !== undefined && inputReserve !== undefined && outputReserve !== undefined
       ? swapQuote(swapAmount, inputReserve, outputReserve)
       : undefined;
   const sellBalance = sellToken === "ETH" ? walletEth?.value : cornBalance;
   const canSwap =
+    !swapError &&
     swapAmount !== undefined &&
     sellBalance !== undefined &&
     swapAmount <= sellBalance &&
@@ -64,7 +72,11 @@ export default function TokenActions() {
     quote > 0n &&
     (sellToken === "ETH" || allowance !== undefined);
   const canTransfer =
-    transferAmount !== undefined && cornBalance !== undefined && transferAmount <= cornBalance && isAddress(recipient);
+    !cornBalanceError &&
+    transferAmount !== undefined &&
+    cornBalance !== undefined &&
+    transferAmount <= cornBalance &&
+    isAddress(recipient);
 
   async function swap() {
     if (!canTransact || !canSwap || !dex || swapAmount === undefined) return;
@@ -107,6 +119,11 @@ export default function TokenActions() {
     <section className="card bg-base-100 shadow-xl">
       <div className="card-body gap-4">
         <h2 className="card-title">CORN wallet and swaps</h2>
+        {(swapError || cornBalanceError) && (
+          <p className="text-sm text-warning m-0" role="alert">
+            Could not refresh Sepolia balances or reserves. Affected actions are paused until the data recovers.
+          </p>
+        )}
         <p className="m-0">
           Your balance: {address ? formatLendingAmount(cornBalance) : "Connect wallet"} {address && "CORN"}
         </p>
@@ -134,7 +151,11 @@ export default function TokenActions() {
         <p className="text-sm m-0">
           Pool quote:{" "}
           {quote === undefined
-            ? "Enter an amount"
+            ? poolError
+              ? "Unavailable"
+              : swapAmount === undefined
+                ? "Enter an amount"
+                : "Loading reserves…"
             : `${formatLendingAmount(quote)} ${sellToken === "ETH" ? "CORN" : "ETH"}`}
         </p>
         <button className="btn btn-primary" disabled={!canTransact || !canSwap} onClick={swap}>

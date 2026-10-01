@@ -8,29 +8,29 @@ export default function PriceActions() {
   const { isConnected, chainId } = useAccount();
   const { data: dex } = useDeployedContractInfo({ contractName: "CornDEX", chainId: LENDING_CHAIN_ID });
   const { data: helper } = useDeployedContractInfo({ contractName: "MovePrice", chainId: LENDING_CHAIN_ID });
-  const { data: price } = useScaffoldReadContract({
+  const { data: price, error: priceError } = useScaffoldReadContract({
     contractName: "CornDEX",
     functionName: "currentPrice",
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: cornReserve } = useScaffoldReadContract({
+  const { data: cornReserve, error: cornReserveError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "balanceOf",
     args: [dex?.address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: helperCorn } = useScaffoldReadContract({
+  const { data: helperCorn, error: helperCornError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "balanceOf",
     args: [helper?.address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: ethReserve } = useBalance({
+  const { data: ethReserve, error: ethReserveError } = useBalance({
     address: dex?.address,
     chainId: LENDING_CHAIN_ID,
     query: { refetchInterval: 3000 },
   });
-  const { data: helperEth } = useBalance({
+  const { data: helperEth, error: helperEthError } = useBalance({
     address: helper?.address,
     chainId: LENDING_CHAIN_ID,
     query: { refetchInterval: 3000 },
@@ -38,7 +38,8 @@ export default function PriceActions() {
   const { writeContractAsync } = useScaffoldWriteContract({ contractName: "MovePrice", chainId: LENDING_CHAIN_ID });
   const ethStep = ethReserve ? ethReserve.value / 20n : undefined;
   const cornStep = cornReserve !== undefined ? cornReserve / 20n : undefined;
-  const canTransact = isConnected && chainId === LENDING_CHAIN_ID && !busy;
+  const readError = Boolean(priceError || cornReserveError || helperCornError || ethReserveError || helperEthError);
+  const canTransact = isConnected && chainId === LENDING_CHAIN_ID && !busy && !readError && Boolean(helper);
   const canIncrease = cornStep !== undefined && cornStep > 0n && helperCorn !== undefined && helperCorn >= cornStep;
   const canDecrease = ethStep !== undefined && ethStep > 0n && helperEth !== undefined && helperEth.value >= ethStep;
 
@@ -58,6 +59,11 @@ export default function PriceActions() {
   return (
     <section className="card bg-base-100 shadow-xl">
       <div className="card-body">
+        {readError && (
+          <p className="text-sm text-warning m-0" role="alert">
+            Could not refresh Sepolia pool data. Displayed values may be stale; demo controls are paused.
+          </p>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div>
             <h2 className="card-title mb-2">Lending oracle</h2>

@@ -18,36 +18,36 @@ export default function BorrowOperations() {
   const [busy, setBusy] = useState(false);
   const { address, chainId, isConnected } = useAccount();
   const { data: lending } = useDeployedContractInfo({ contractName: "Lending", chainId: LENDING_CHAIN_ID });
-  const { data: collateral } = useScaffoldReadContract({
+  const { data: collateral, error: collateralError } = useScaffoldReadContract({
     contractName: "Lending",
     functionName: "s_userCollateral",
     args: [address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: debt } = useScaffoldReadContract({
+  const { data: debt, error: debtError } = useScaffoldReadContract({
     contractName: "Lending",
     functionName: "s_userBorrowed",
     args: [address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: price } = useScaffoldReadContract({
+  const { data: price, error: priceError } = useScaffoldReadContract({
     contractName: "CornDEX",
     functionName: "currentPrice",
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: balance } = useScaffoldReadContract({
+  const { data: balance, error: balanceError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "balanceOf",
     args: [address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: inventory } = useScaffoldReadContract({
+  const { data: inventory, error: inventoryError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "balanceOf",
     args: [lending?.address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: allowance } = useScaffoldReadContract({
+  const { data: allowance, error: allowanceError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "allowance",
     args: [address, lending?.address],
@@ -63,8 +63,10 @@ export default function BorrowOperations() {
   });
   const borrow = parsePositiveAmount(borrowInput);
   const repay = parsePositiveAmount(repayInput);
-  const canTransact = isConnected && chainId === LENDING_CHAIN_ID && !busy;
-  const ready = collateral !== undefined && debt !== undefined && price !== undefined;
+  const borrowError = Boolean(collateralError || debtError || priceError || inventoryError);
+  const repayError = Boolean(debtError || balanceError || allowanceError);
+  const canTransact = isConnected && chainId === LENDING_CHAIN_ID && !busy && Boolean(lending);
+  const ready = !borrowError && collateral !== undefined && debt !== undefined && price !== undefined;
   const debtLimit = ready ? (((collateral * price) / WEI_PER_UNIT) * 100n) / MIN_COLLATERAL_RATIO : undefined;
   const available =
     debtLimit !== undefined && debt !== undefined ? (debtLimit > debt ? debtLimit - debt : 0n) : undefined;
@@ -77,7 +79,12 @@ export default function BorrowOperations() {
     borrow <= maxBorrow &&
     isPositionSafe(collateral, debt + borrow, price);
   const canRepay =
-    repay !== undefined && debt !== undefined && balance !== undefined && repay <= debt && repay <= balance;
+    !repayError &&
+    repay !== undefined &&
+    debt !== undefined &&
+    balance !== undefined &&
+    repay <= debt &&
+    repay <= balance;
   const previewRatio = ready && borrow !== undefined ? positionRatio(collateral, debt + borrow, price) : undefined;
 
   async function borrowCorn() {
@@ -114,6 +121,11 @@ export default function BorrowOperations() {
     <section className="card bg-base-100 shadow-xl">
       <div className="card-body gap-4">
         <h2 className="card-title">Borrow and repay CORN</h2>
+        {(borrowError || repayError) && (
+          <p className="text-sm text-warning m-0" role="alert">
+            Could not refresh Sepolia lending data. Affected actions are paused until the data recovers.
+          </p>
+        )}
         <p className="m-0">
           Your debt: {address ? formatLendingAmount(debt) : "Connect wallet"} {address && "CORN"}
         </p>

@@ -3,11 +3,15 @@ import CollateralGraph from "./CollateralGraph";
 import UserPosition from "./UserPosition";
 import { isAddress } from "viem";
 import { useAccount } from "wagmi";
-import { useScaffoldEventHistory, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldEventHistory, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { LENDING_CHAIN_ID } from "~~/utils/lending";
 
 export default function UserPositionsTable() {
   const { address } = useAccount();
+  const { data: lending, isLoading: contractLoading } = useDeployedContractInfo({
+    contractName: "Lending",
+    chainId: LENDING_CHAIN_ID,
+  });
   const {
     data: events,
     isLoading,
@@ -20,18 +24,18 @@ export default function UserPositionsTable() {
     chainId: LENDING_CHAIN_ID,
     watch: true,
   });
-  const { data: price } = useScaffoldReadContract({
+  const { data: price, error: priceError } = useScaffoldReadContract({
     contractName: "CornDEX",
     functionName: "currentPrice",
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: collateral } = useScaffoldReadContract({
+  const { data: collateral, error: collateralError } = useScaffoldReadContract({
     contractName: "Lending",
     functionName: "s_userCollateral",
     args: [address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: debt } = useScaffoldReadContract({
+  const { data: debt, error: debtError } = useScaffoldReadContract({
     contractName: "Lending",
     functionName: "s_userBorrowed",
     args: [address],
@@ -43,12 +47,19 @@ export default function UserPositionsTable() {
     ],
     [events],
   );
+  const positionError = Boolean(priceError || collateralError || debtError);
 
   return (
     <section className="card bg-base-100 shadow-xl min-w-0">
       <div className="card-body">
         <h2 className="card-title">Your position</h2>
-        <CollateralGraph collateral={collateral} debt={debt} price={price} connected={Boolean(address)} />
+        {positionError ? (
+          <p className="text-sm text-warning m-0" role="alert">
+            Could not refresh your Sepolia position. The coverage chart will return when the data recovers.
+          </p>
+        ) : (
+          <CollateralGraph collateral={collateral} debt={debt} price={price} connected={Boolean(address)} />
+        )}
         <div className="divider" />
         <div className="flex justify-between items-center gap-3">
           <h2 className="card-title">Depositor positions</h2>
@@ -72,11 +83,15 @@ export default function UserPositionsTable() {
               </tr>
             </thead>
             <tbody>
-              {error ? (
+              {!lending && !contractLoading ? (
+                <tr>
+                  <td colSpan={5}>Sepolia Lending contract unavailable. Reload to retry.</td>
+                </tr>
+              ) : error ? (
                 <tr>
                   <td colSpan={5}>Could not load depositor history. Refresh to retry.</td>
                 </tr>
-              ) : isLoading ? (
+              ) : isLoading || contractLoading ? (
                 <tr>
                   <td colSpan={5}>Loading depositor history…</td>
                 </tr>
@@ -87,7 +102,7 @@ export default function UserPositionsTable() {
                   </td>
                 </tr>
               ) : (
-                users.map(user => <UserPosition key={user} user={user} price={price} />)
+                users.map(user => <UserPosition key={user} user={user} price={priceError ? undefined : price} />)
               )}
             </tbody>
           </table>

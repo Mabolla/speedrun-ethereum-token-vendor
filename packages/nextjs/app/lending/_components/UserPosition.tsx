@@ -11,31 +11,31 @@ export default function UserPosition({ user, price }: Props) {
   const [busy, setBusy] = useState(false);
   const { address, chainId, isConnected } = useAccount();
   const { data: lending } = useDeployedContractInfo({ contractName: "Lending", chainId: LENDING_CHAIN_ID });
-  const { data: collateral } = useScaffoldReadContract({
+  const { data: collateral, error: collateralError } = useScaffoldReadContract({
     contractName: "Lending",
     functionName: "s_userCollateral",
     args: [user],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: debt } = useScaffoldReadContract({
+  const { data: debt, error: debtError } = useScaffoldReadContract({
     contractName: "Lending",
     functionName: "s_userBorrowed",
     args: [user],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: liquidatable } = useScaffoldReadContract({
+  const { data: liquidatable, error: liquidatableError } = useScaffoldReadContract({
     contractName: "Lending",
     functionName: "isLiquidatable",
     args: [user],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: allowance } = useScaffoldReadContract({
+  const { data: allowance, error: allowanceError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "allowance",
     args: [address, lending?.address],
     chainId: LENDING_CHAIN_ID,
   });
-  const { data: balance } = useScaffoldReadContract({
+  const { data: balance, error: balanceError } = useScaffoldReadContract({
     contractName: "Corn",
     functionName: "balanceOf",
     args: [address],
@@ -49,14 +49,17 @@ export default function UserPosition({ user, price }: Props) {
     contractName: "Lending",
     chainId: LENDING_CHAIN_ID,
   });
+  const positionError = Boolean(collateralError || debtError || liquidatableError);
+  const actionError = positionError || Boolean(allowanceError || balanceError);
   const ratio =
-    collateral !== undefined && debt !== undefined && price !== undefined
+    !positionError && collateral !== undefined && debt !== undefined && price !== undefined
       ? positionRatio(collateral, debt, price)
       : undefined;
   const canLiquidate =
     isConnected &&
     chainId === LENDING_CHAIN_ID &&
     !busy &&
+    !actionError &&
     liquidatable === true &&
     debt !== undefined &&
     debt > 0n &&
@@ -85,15 +88,22 @@ export default function UserPosition({ user, price }: Props) {
       <td>
         <AddressBlock address={user} format="short" size="sm" />
       </td>
-      <td>{formatLendingAmount(collateral)}</td>
-      <td>{formatLendingAmount(debt)}</td>
+      <td>{collateralError ? "Unavailable" : formatLendingAmount(collateral)}</td>
+      <td>{debtError ? "Unavailable" : formatLendingAmount(debt)}</td>
       <td className={liquidatable ? "text-error" : "text-success"}>
-        {ratio === undefined ? "Loading…" : ratio === null ? "No debt" : `${ratio.toFixed(2)}%`}
+        {positionError
+          ? "Unavailable"
+          : ratio === undefined
+            ? "Loading…"
+            : ratio === null
+              ? "No debt"
+              : `${ratio.toFixed(2)}%`}
       </td>
       <td>
         <button className="btn btn-xs btn-outline" disabled={!canLiquidate} onClick={liquidate}>
           {busy ? "Confirming…" : "Liquidate"}
         </button>
+        {actionError && <p className="text-xs text-warning m-0 mt-1">Data unavailable</p>}
         {liquidatable && isConnected && balance !== undefined && debt !== undefined && balance < debt && (
           <p className="text-xs m-0 mt-1">Need {formatLendingAmount(debt)} CORN</p>
         )}
