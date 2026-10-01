@@ -37,7 +37,13 @@ export default deployScript(
       ["PredictionMarketTokenNo", "i_noToken", "No", "N"],
     ] as const) {
       const address = await env.read(market, { functionName: getter });
-      if (env.getOrNull(recordName)?.address.toLowerCase() === address.toLowerCase()) continue;
+      const previous = env.getOrNull(recordName);
+      if (
+        previous?.address.toLowerCase() === address.toLowerCase() &&
+        previous.bytecode === artifacts.PredictionMarketToken.bytecode &&
+        previous.metadata === artifacts.PredictionMarketToken.metadata
+      )
+        continue;
       await env.save(recordName, {
         ...artifacts.PredictionMarketToken,
         address,
