@@ -27,6 +27,11 @@ export const menuLinks: HeaderMenuLink[] = [
     icon: <CircleStackIcon className="h-4 w-4" />,
   },
   {
+    label: "DEX",
+    href: "/dex",
+    icon: <CircleStackIcon className="h-4 w-4" />,
+  },
+  {
     label: "Events",
     href: "/events",
     icon: <BoltIcon className="h-4 w-4" />,
