@@ -32,6 +32,7 @@ export default defineConfig({
     compilers: [
       {
         version: "0.8.20",
+        path: process.env.SOLC_COMPILER_PATH,
         settings: {
           optimizer: {
             enabled: true,
