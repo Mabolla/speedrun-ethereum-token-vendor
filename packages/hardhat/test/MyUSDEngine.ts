@@ -4,8 +4,8 @@
 
 import { network } from "hardhat";
 import { expect } from "chai";
-import type { MyUSD, DEX, MyUSDEngine, Oracle, RateController } from "../types/ethers-contracts/stablecoins/index.js";
-import type { MyUSDStaking } from "../types/ethers-contracts/stablecoins/MyUSDStaking.sol/MyUSDStaking.js";
+import type { MyUSD, MyUSDEngine, Oracle, MyUSDStaking, RateController } from "../types/ethers-contracts/index.js";
+import type { DEX } from "../types/ethers-contracts/stablecoins/DEX.js";
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/types";
 import { fetchPriceFromUniswap } from "../scripts/fetchPriceFromUniswap.js";
 
@@ -37,7 +37,7 @@ describe("🚩 Stablecoin Challenge 🤓", function () {
     if (contractAddress) {
       contractArtifact = `contracts/download-${contractAddress}.sol:MyUSDEngine`;
     } else {
-      contractArtifact = "contracts/stablecoins/MyUSDEngine.sol:MyUSDEngine";
+      contractArtifact = "contracts/MyUSDEngine.sol:MyUSDEngine";
     }
 
     // Get the deployer's current nonce

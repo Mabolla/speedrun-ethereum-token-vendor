@@ -3,13 +3,19 @@ name: Test and deploy Stablecoins to Sepolia
 on:
   workflow_dispatch:
   push:
-    branches: [agent/challenge-stablecoins]
+    branches: [agent/challenge-stablecoins, agent/fix-stablecoins-source-path]
     paths:
       - .github/workflows/deploy-stablecoins.yml
       - packages/hardhat/contracts/stablecoins/**
+      - packages/hardhat/contracts/MyUSDEngine.sol
+      - packages/hardhat/contracts/MyUSD.sol
+      - packages/hardhat/contracts/MyUSDStaking.sol
+      - packages/hardhat/contracts/Oracle.sol
+      - packages/hardhat/contracts/RateController.sol
       - packages/hardhat/deploy/05_deploy_stablecoins.ts
       - packages/hardhat/test/MyUSDEngine.ts
       - packages/hardhat/scripts/fetchPriceFromUniswap.ts
+      - packages/hardhat/scripts/checkOracleVerification.ts
 
 permissions:
   contents: write
@@ -30,7 +36,7 @@ jobs:
       - run: yarn workspaces focus @se-2/hardhat
       - name: Run official Stablecoin grading tests
         env:
-          STABLECOIN_ETH_USD_PRICE: "2600"
+          STABLECOIN_ETH_USD_PRICE: "3000"
         run: yarn workspace @se-2/hardhat hardhat test test/MyUSDEngine.ts --network hardhat
       - name: Deploy only Stablecoin contracts to Sepolia
         env:

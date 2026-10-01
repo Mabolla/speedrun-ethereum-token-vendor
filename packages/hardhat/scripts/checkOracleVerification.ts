@@ -16,6 +16,39 @@ type EtherscanResponse = { status: string; result: SourceRecord[] | string };
 
 let lastRequestAt = 0;
 
+function checkEngineAutograderSource(sourceCode: string, deployment: Deployment) {
+  const sourceJson = sourceCode.startsWith("{{") && sourceCode.endsWith("}}") ? sourceCode.slice(1, -1) : sourceCode;
+  let sources: Record<string, { content?: string }> | undefined;
+  try {
+    sources = (JSON.parse(sourceJson) as { sources?: Record<string, { content?: string }> }).sources;
+  } catch {
+    throw new Error(`MyUSDEngine (${deployment.address}): verified source is not standard JSON input`);
+  }
+
+  // Speedrun's extractor accepts this exact suffix, including Hardhat 3's project/ prefix.
+  // A path such as contracts/stablecoins/MyUSDEngine.sol is verified but cannot be graded.
+  const suffix = "contracts/MyUSDEngine.sol";
+  const key = sources && Object.keys(sources).find(path => path === suffix || path.endsWith(`/${suffix}`));
+  const engineSource = key && sources?.[key]?.content;
+  if (!engineSource?.trim()) {
+    throw new Error(`MyUSDEngine (${deployment.address}): verified source lacks the autograder path ${suffix}`);
+  }
+
+  // The grader downloads only the engine and supplies these dependencies in its contracts/ directory.
+  const supportedRelativeImports = new Set(["./MyUSD.sol", "./Oracle.sol", "./MyUSDStaking.sol"]);
+  const imports = [...engineSource.matchAll(/\bimport\s+(?:[^;]*?\bfrom\s+)?["']([^"']+)["']\s*;/g)].map(
+    match => match[1],
+  );
+  const relativeImports = imports.filter(path => path.startsWith("."));
+  if (
+    relativeImports.length !== supportedRelativeImports.size ||
+    relativeImports.some(path => !supportedRelativeImports.has(path)) ||
+    new Set(relativeImports).size !== supportedRelativeImports.size
+  ) {
+    throw new Error(`MyUSDEngine (${deployment.address}): source imports do not match the autograder dependencies`);
+  }
+}
+
 async function getVerifiedSource(name: string, deployment: Deployment): Promise<SourceRecord> {
   const url = new URL("https://api.etherscan.io/v2/api");
   url.search = new URLSearchParams({
@@ -67,6 +100,7 @@ async function getVerifiedSource(name: string, deployment: Deployment): Promise<
     } catch {
       throw new Error(`${name} (${deployment.address}): Etherscan ABI is invalid`);
     }
+    if (name === "MyUSDEngine") checkEngineAutograderSource(source.SourceCode, deployment);
     return source;
   }
 

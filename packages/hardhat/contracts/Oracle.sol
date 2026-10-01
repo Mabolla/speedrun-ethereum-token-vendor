@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./DEX.sol";
+import "./stablecoins/DEX.sol";
 
 contract Oracle {
     /* ========== STATE VARIABLES ========== */
