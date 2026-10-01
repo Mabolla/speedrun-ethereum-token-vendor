@@ -6,7 +6,7 @@ describe("DEX boundary cases", function () {
     const { ethers } = await network.create();
     const [owner, user] = await ethers.getSigners();
     const token = await ethers.deployContract("Balloons");
-    const dex = await ethers.deployContract("DEX", [await token.getAddress()]);
+    const dex = await ethers.deployContract("contracts/DEX.sol:DEX", [await token.getAddress()]);
     const address = await dex.getAddress();
     if (initialize) {
       await token.approve(address, ethers.parseEther("5"));
