@@ -26,6 +26,14 @@ const deployTasks = [
     .build(),
 ];
 
+const zkCompiler = {
+  version: "0.8.28",
+  path: process.env.SOLC_ZK_COMPILER_PATH,
+  settings: {
+    optimizer: { enabled: true, runs: 200 },
+  },
+};
+
 export default defineConfig({
   plugins: [hardhatToolbox, HardhatDeploy],
   solidity: {
@@ -42,6 +50,28 @@ export default defineConfig({
         },
       },
     ],
+    overrides: {
+      "contracts/PredictionMarket.sol": {
+        version: "0.8.20",
+        path: process.env.SOLC_COMPILER_PATH,
+        settings: {
+          optimizer: { enabled: true, runs: 200 },
+          viaIR: true,
+        },
+      },
+      "contracts/PredictionMarketToken.sol": {
+        version: "0.8.20",
+        path: process.env.SOLC_COMPILER_PATH,
+        settings: {
+          optimizer: { enabled: true, runs: 200 },
+          viaIR: true,
+        },
+      },
+      "contracts/Voting.sol": zkCompiler,
+      "contracts/Verifier.sol": zkCompiler,
+      "contracts/mocks/VerifierMock.sol": zkCompiler,
+    },
+    npmFilesToBuild: ["poseidon-solidity/PoseidonT3.sol", "@zk-kit/lean-imt.sol/LeanIMT.sol"],
   },
   generateTypedArtifacts: {
     destinations: [
