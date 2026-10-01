@@ -1,0 +1,699 @@
+{
+  "address": "0x88b495a5a9d6e9c3526b316377ffd77b068e3500",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_verifier",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_question",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "commitment",
+          "type": "uint256"
+        }
+      ],
+      "name": "Voting__CommitmentAlreadyAdded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Voting__EmptyTree",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Voting__InvalidProof",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Voting__InvalidRoot",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Voting__NotAllowedToVote",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "nullifierHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "Voting__NullifierHashAlreadyUsed",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "NewLeaf",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "nullifierHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "voter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "vote",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalYes",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalNo",
+          "type": "uint256"
+        }
+      ],
+      "name": "VoteCast",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "voter",
+          "type": "address"
+        }
+      ],
+      "name": "VoterAdded",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "voters",
+          "type": "address[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "statuses",
+          "type": "bool[]"
+        }
+      ],
+      "name": "addVoters",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_voter",
+          "type": "address"
+        }
+      ],
+      "name": "getVoterData",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "voter",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "registered",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getVotingData",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "question",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "contractOwner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "yesVotes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "noVotes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "size",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "depth",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "root",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "i_verifier",
+      "outputs": [
+        {
+          "internalType": "contract IVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_commitment",
+          "type": "uint256"
+        }
+      ],
+      "name": "register",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "_proof",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_nullifierHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_root",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_vote",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_depth",
+          "type": "bytes32"
+        }
+      ],
+      "name": "vote",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "contractName": "Voting",
+  "sourceName": "contracts/Voting.sol",
+  "bytecode": "0x60a060405234801561000f575f5ffd5b5060405161103c38038061103c83398101604081905261002e91610104565b826001600160a01b03811661005c57604051631e4fbdf760e01b81525f600482015260240160405180910390fd5b61006581610086565b5060016100728282610259565b50506001600160a01b031660805250610313565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160a01b03811681146100eb575f5ffd5b919050565b634e487b7160e01b5f52604160045260245ffd5b5f5f5f60608486031215610116575f5ffd5b61011f846100d5565b925061012d602085016100d5565b60408501519092506001600160401b03811115610148575f5ffd5b8401601f81018613610158575f5ffd5b80516001600160401b03811115610171576101716100f0565b604051601f8201601f19908116603f011681016001600160401b038111828210171561019f5761019f6100f0565b6040528181528282016020018810156101b6575f5ffd5b8160208401602083015e5f602083830101528093505050509250925092565b600181811c908216806101e957607f821691505b60208210810361020757634e487b7160e01b5f52602260045260245ffd5b50919050565b601f82111561025457805f5260205f20601f840160051c810160208510156102325750805b601f840160051c820191505b81811015610251575f815560010161023e565b50505b505050565b81516001600160401b03811115610272576102726100f0565b6102868161028084546101d5565b8461020d565b6020601f8211600181146102b8575f83156102a15750848201515b5f19600385901b1c1916600184901b178455610251565b5f84815260208120601f198516915b828110156102e757878501518255602094850194600190920191016102c7565b508482101561030457868401515f19600387901b60f8161c191681555b50505050600190811b01905550565b608051610d0a6103325f395f818161014d01526103450152610d0a5ff3fe608060405234801561000f575f5ffd5b5060043610610090575f3560e01c8063b5b831e211610063578063b5b831e21461012d578063db9753a014610148578063f207564e1461016f578063f2fde38b14610182578063ff29897d14610195575f5ffd5b80631ac9b6c314610094578063715018a6146100a95780638da5cb5b146100b15780638fb4cd80146100da575b5f5ffd5b6100a76100a2366004610972565b6101a8565b005b6100a761049d565b5f546001600160a01b03165b6040516001600160a01b0390911681526020015b60405180910390f35b6101166100e8366004610a40565b6001600160a01b03165f9081526002602090815260408083205460059092529091205460ff91821692911690565b6040805192151583529015156020830152016100d1565b6101356104b0565b6040516100d19796959493929190610a9b565b6100bd7f000000000000000000000000000000000000000000000000000000000000000081565b6100a761017d366004610ae7565b6105ec565b6100a7610190366004610a40565b610756565b6100a76101a3366004610b46565b610793565b826101c657604051631cdc57bb60e31b815260040160405180910390fd5b604051637a3e5e1d60e11b81526007600482015273__$40c25d1b07773c4089151465be6444093f$__9063f47cbc3a90602401602060405180830381865af4158015610214573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906102389190610bb2565b83146102575760405163e1b55f2b60e01b815260040160405180910390fd5b5f848152600b602052604090205460ff161561028e57604051630c3ffb0960e21b8152600481018590526024015b60405180910390fd5b60408051600480825260a082019092525f916020820160808036833701905050905084815f815181106102c3576102c3610bc9565b60200260200101818152505083816001815181106102e3576102e3610bc9565b602002602001018181525050828160028151811061030357610303610bc9565b602002602001018181525050818160038151811061032357610323610bc9565b6020908102919091010152604051633a94343960e21b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000169063ea50d0e49061037c9089908590600401610bdd565b602060405180830381865afa9250505080156103b5575060408051601f3d908101601f191682019092526103b291810190610c42565b60015b6103d25760405163e8a02c4b60e01b815260040160405180910390fd5b806103f05760405163e8a02c4b60e01b815260040160405180910390fd5b505f858152600b60205260409020805460ff191660019081179091558314801561042d5760038054905f61042383610c5d565b9190505550610442565b60048054905f61043c83610c5d565b91905055505b600354600454604080518415158152426020820152908101929092526060820152339087907fdeb132643171a42da82dca5065904dc8d9ad8cd79074da8797bc9fc046e825889060800160405180910390a350505050505050565b6104a56108e3565b6104ae5f61090f565b565b60605f5f5f5f5f5f600180546104c590610c81565b80601f01602080910402602001604051908101604052809291908181526020018280546104f190610c81565b801561053c5780601f106105135761010080835404028352916020019161053c565b820191905f5260205f20905b81548152906001019060200180831161051f57829003601f168201915b505050505096506105545f546001600160a01b031690565b6003546004805460078054600854604051637a3e5e1d60e11b815294850192909252949a509298509650919450925073__$40c25d1b07773c4089151465be6444093f$__9063f47cbc3a90602401602060405180830381865af41580156105bd573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906105e19190610bb2565b905090919293949596565b335f9081526002602052604090205460ff1615806106185750335f9081526005602052604090205460ff165b1561063657604051632fa7af6960e01b815260040160405180910390fd5b5f8181526006602052604090205460ff161561066857604051636d6592b960e11b815260048101829052602401610285565b60078054604051632f85497160e01b81526004810192909252602482018390529073__$40c25d1b07773c4089151465be6444093f$__90632f85497190604401602060405180830381865af41580156106c3573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906106e79190610bb2565b50335f9081526005602090815260408083208054600160ff199182168117909255868552600684529382902080549094161790925581518381529081018490527f83086dd2f9a7759c568afebf9730985f32eada5336224c32f153e8089d8f5ea7910160405180910390a15050565b61075e6108e3565b6001600160a01b03811661078757604051631e4fbdf760e01b81525f6004820152602401610285565b6107908161090f565b50565b61079b6108e3565b8281146107f65760405162461bcd60e51b815260206004820152602360248201527f566f7465727320616e64207374617475736573206c656e677468206d69736d616044820152620e8c6d60eb1b6064820152608401610285565b5f5b838110156108dc5782828281811061081257610812610bc9565b90506020020160208101906108279190610cb9565b60025f87878581811061083c5761083c610bc9565b90506020020160208101906108519190610a40565b6001600160a01b0316815260208101919091526040015f20805460ff191691151591909117905584848281811061088a5761088a610bc9565b905060200201602081019061089f9190610a40565b6001600160a01b03167fa636f4a11e2d3ba7f89d042ecb0a6b886716e98cd49d8fd876ee0f73bced42b860405160405180910390a26001016107f8565b5050505050565b5f546001600160a01b031633146104ae5760405163118cdaa760e01b8152336004820152602401610285565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b634e487b7160e01b5f52604160045260245ffd5b5f5f5f5f5f60a08688031215610986575f5ffd5b853567ffffffffffffffff81111561099c575f5ffd5b8601601f810188136109ac575f5ffd5b803567ffffffffffffffff8111156109c6576109c661095e565b604051601f8201601f19908116603f0116810167ffffffffffffffff811182821017156109f5576109f561095e565b6040528181528282016020018a1015610a0c575f5ffd5b816020840160208301375f602092820183015299908801359850604088013597606081013597506080013595509350505050565b5f60208284031215610a50575f5ffd5b81356001600160a01b0381168114610a66575f5ffd5b9392505050565b5f81518084528060208401602086015e5f602082860101526020601f19601f83011685010191505092915050565b60e081525f610aad60e083018a610a6d565b6001600160a01b039890981660208301525060408101959095526060850193909352608084019190915260a083015260c090910152919050565b5f60208284031215610af7575f5ffd5b5035919050565b5f5f83601f840112610b0e575f5ffd5b50813567ffffffffffffffff811115610b25575f5ffd5b6020830191508360208260051b8501011115610b3f575f5ffd5b9250929050565b5f5f5f5f60408587031215610b59575f5ffd5b843567ffffffffffffffff811115610b6f575f5ffd5b610b7b87828801610afe565b909550935050602085013567ffffffffffffffff811115610b9a575f5ffd5b610ba687828801610afe565b95989497509550505050565b5f60208284031215610bc2575f5ffd5b5051919050565b634e487b7160e01b5f52603260045260245ffd5b604081525f610bef6040830185610a6d565b82810360208401528084518083526020830191506020860192505f5b81811015610c29578351835260209384019390920191600101610c0b565b50909695505050505050565b8015158114610790575f5ffd5b5f60208284031215610c52575f5ffd5b8151610a6681610c35565b5f60018201610c7a57634e487b7160e01b5f52601160045260245ffd5b5060010190565b600181811c90821680610c9557607f821691505b602082108103610cb357634e487b7160e01b5f52602260045260245ffd5b50919050565b5f60208284031215610cc9575f5ffd5b8135610a6681610c3556fea2646970667358221220fe184e16f0b8d8b6052f0daf4b1df8aa10dcd1cb7188b34ace9361427c7cb5c464736f6c634300081c0033",
+  "deployedBytecode": "0x608060405234801561000f575f5ffd5b5060043610610090575f3560e01c8063b5b831e211610063578063b5b831e21461012d578063db9753a014610148578063f207564e1461016f578063f2fde38b14610182578063ff29897d14610195575f5ffd5b80631ac9b6c314610094578063715018a6146100a95780638da5cb5b146100b15780638fb4cd80146100da575b5f5ffd5b6100a76100a2366004610972565b6101a8565b005b6100a761049d565b5f546001600160a01b03165b6040516001600160a01b0390911681526020015b60405180910390f35b6101166100e8366004610a40565b6001600160a01b03165f9081526002602090815260408083205460059092529091205460ff91821692911690565b6040805192151583529015156020830152016100d1565b6101356104b0565b6040516100d19796959493929190610a9b565b6100bd7f000000000000000000000000000000000000000000000000000000000000000081565b6100a761017d366004610ae7565b6105ec565b6100a7610190366004610a40565b610756565b6100a76101a3366004610b46565b610793565b826101c657604051631cdc57bb60e31b815260040160405180910390fd5b604051637a3e5e1d60e11b81526007600482015273__$40c25d1b07773c4089151465be6444093f$__9063f47cbc3a90602401602060405180830381865af4158015610214573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906102389190610bb2565b83146102575760405163e1b55f2b60e01b815260040160405180910390fd5b5f848152600b602052604090205460ff161561028e57604051630c3ffb0960e21b8152600481018590526024015b60405180910390fd5b60408051600480825260a082019092525f916020820160808036833701905050905084815f815181106102c3576102c3610bc9565b60200260200101818152505083816001815181106102e3576102e3610bc9565b602002602001018181525050828160028151811061030357610303610bc9565b602002602001018181525050818160038151811061032357610323610bc9565b6020908102919091010152604051633a94343960e21b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000169063ea50d0e49061037c9089908590600401610bdd565b602060405180830381865afa9250505080156103b5575060408051601f3d908101601f191682019092526103b291810190610c42565b60015b6103d25760405163e8a02c4b60e01b815260040160405180910390fd5b806103f05760405163e8a02c4b60e01b815260040160405180910390fd5b505f858152600b60205260409020805460ff191660019081179091558314801561042d5760038054905f61042383610c5d565b9190505550610442565b60048054905f61043c83610c5d565b91905055505b600354600454604080518415158152426020820152908101929092526060820152339087907fdeb132643171a42da82dca5065904dc8d9ad8cd79074da8797bc9fc046e825889060800160405180910390a350505050505050565b6104a56108e3565b6104ae5f61090f565b565b60605f5f5f5f5f5f600180546104c590610c81565b80601f01602080910402602001604051908101604052809291908181526020018280546104f190610c81565b801561053c5780601f106105135761010080835404028352916020019161053c565b820191905f5260205f20905b81548152906001019060200180831161051f57829003601f168201915b505050505096506105545f546001600160a01b031690565b6003546004805460078054600854604051637a3e5e1d60e11b815294850192909252949a509298509650919450925073__$40c25d1b07773c4089151465be6444093f$__9063f47cbc3a90602401602060405180830381865af41580156105bd573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906105e19190610bb2565b905090919293949596565b335f9081526002602052604090205460ff1615806106185750335f9081526005602052604090205460ff165b1561063657604051632fa7af6960e01b815260040160405180910390fd5b5f8181526006602052604090205460ff161561066857604051636d6592b960e11b815260048101829052602401610285565b60078054604051632f85497160e01b81526004810192909252602482018390529073__$40c25d1b07773c4089151465be6444093f$__90632f85497190604401602060405180830381865af41580156106c3573d5f5f3e3d5ffd5b505050506040513d601f19601f820116820180604052508101906106e79190610bb2565b50335f9081526005602090815260408083208054600160ff199182168117909255868552600684529382902080549094161790925581518381529081018490527f83086dd2f9a7759c568afebf9730985f32eada5336224c32f153e8089d8f5ea7910160405180910390a15050565b61075e6108e3565b6001600160a01b03811661078757604051631e4fbdf760e01b81525f6004820152602401610285565b6107908161090f565b50565b61079b6108e3565b8281146107f65760405162461bcd60e51b815260206004820152602360248201527f566f7465727320616e64207374617475736573206c656e677468206d69736d616044820152620e8c6d60eb1b6064820152608401610285565b5f5b838110156108dc5782828281811061081257610812610bc9565b90506020020160208101906108279190610cb9565b60025f87878581811061083c5761083c610bc9565b90506020020160208101906108519190610a40565b6001600160a01b0316815260208101919091526040015f20805460ff191691151591909117905584848281811061088a5761088a610bc9565b905060200201602081019061089f9190610a40565b6001600160a01b03167fa636f4a11e2d3ba7f89d042ecb0a6b886716e98cd49d8fd876ee0f73bced42b860405160405180910390a26001016107f8565b5050505050565b5f546001600160a01b031633146104ae5760405163118cdaa760e01b8152336004820152602401610285565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b634e487b7160e01b5f52604160045260245ffd5b5f5f5f5f5f60a08688031215610986575f5ffd5b853567ffffffffffffffff81111561099c575f5ffd5b8601601f810188136109ac575f5ffd5b803567ffffffffffffffff8111156109c6576109c661095e565b604051601f8201601f19908116603f0116810167ffffffffffffffff811182821017156109f5576109f561095e565b6040528181528282016020018a1015610a0c575f5ffd5b816020840160208301375f602092820183015299908801359850604088013597606081013597506080013595509350505050565b5f60208284031215610a50575f5ffd5b81356001600160a01b0381168114610a66575f5ffd5b9392505050565b5f81518084528060208401602086015e5f602082860101526020601f19601f83011685010191505092915050565b60e081525f610aad60e083018a610a6d565b6001600160a01b039890981660208301525060408101959095526060850193909352608084019190915260a083015260c090910152919050565b5f60208284031215610af7575f5ffd5b5035919050565b5f5f83601f840112610b0e575f5ffd5b50813567ffffffffffffffff811115610b25575f5ffd5b6020830191508360208260051b8501011115610b3f575f5ffd5b9250929050565b5f5f5f5f60408587031215610b59575f5ffd5b843567ffffffffffffffff811115610b6f575f5ffd5b610b7b87828801610afe565b909550935050602085013567ffffffffffffffff811115610b9a575f5ffd5b610ba687828801610afe565b95989497509550505050565b5f60208284031215610bc2575f5ffd5b5051919050565b634e487b7160e01b5f52603260045260245ffd5b604081525f610bef6040830185610a6d565b82810360208401528084518083526020830191506020860192505f5b81811015610c29578351835260209384019390920191600101610c0b565b50909695505050505050565b8015158114610790575f5ffd5b5f60208284031215610c52575f5ffd5b8151610a6681610c35565b5f60018201610c7a57634e487b7160e01b5f52601160045260245ffd5b5060010190565b600181811c90821680610c9557607f821691505b602082108103610cb357634e487b7160e01b5f52602260045260245ffd5b50919050565b5f60208284031215610cc9575f5ffd5b8135610a6681610c3556fea2646970667358221220fe184e16f0b8d8b6052f0daf4b1df8aa10dcd1cb7188b34ace9361427c7cb5c464736f6c634300081c0033",
+  "linkReferences": {
+    "npm/@zk-kit/lean-imt.sol@2.0.1/LeanIMT.sol": {
+      "LeanIMT": [
+        {
+          "length": 20,
+          "start": 1294
+        },
+        {
+          "length": 20,
+          "start": 2231
+        },
+        {
+          "length": 20,
+          "start": 2493
+        }
+      ]
+    }
+  },
+  "deployedLinkReferences": {
+    "npm/@zk-kit/lean-imt.sol@2.0.1/LeanIMT.sol": {
+      "LeanIMT": [
+        {
+          "length": 20,
+          "start": 476
+        },
+        {
+          "length": 20,
+          "start": 1413
+        },
+        {
+          "length": 20,
+          "start": 1675
+        }
+      ]
+    }
+  },
+  "immutableReferences": {
+    "9720": [
+      {
+        "length": 32,
+        "start": 333
+      },
+      {
+        "length": 32,
+        "start": 837
+      }
+    ]
+  },
+  "inputSourceName": "project/contracts/Voting.sol",
+  "devdoc": {
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "addVoters(address[],bool[])": {
+        "details": "Only the contract owner can call this function. Emits `VoterAdded` for each updated entry.",
+        "params": {
+          "statuses": "True to allow, false to revoke",
+          "voters": "Addresses to update in the allowlist"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "register(uint256)": {
+        "details": "A given allowlisted address can register exactly once. Reverts if      the caller is not allowlisted or has already registered, or if the      same commitment has been previously inserted. Emits `NewLeaf`.",
+        "params": {
+          "_commitment": "The Poseidon-based commitment to insert into the IMT"
+        }
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "vote(bytes,bytes32,bytes32,bytes32,bytes32)": {
+        "details": "Enforces single-use via `s_nullifierHashes`. Public inputs order must      match the circuit: nullifierHash, root, vote, depth. The `_vote`      value is interpreted as: 1 => yes, any other value => no. Emits `VoteCast`.",
+        "params": {
+          "_depth": "Tree depth used by the circuit",
+          "_nullifierHash": "Unique nullifier to prevent double voting",
+          "_proof": "Ultra Honk proof bytes",
+          "_root": "Merkle root corresponding to the registered commitments tree",
+          "_vote": "Encoded vote: 1 for yes, otherwise counted as no"
+        }
+      }
+    },
+    "version": 1
+  },
+  "evm": {
+    "gasEstimates": {
+      "creation": {
+        "codeDepositCost": "667600",
+        "executionCost": "infinite",
+        "totalCost": "infinite"
+      },
+      "external": {
+        "addVoters(address[],bool[])": "infinite",
+        "getVoterData(address)": "4786",
+        "getVotingData()": "infinite",
+        "i_verifier()": "infinite",
+        "owner()": "2352",
+        "register(uint256)": "infinite",
+        "renounceOwnership()": "infinite",
+        "transferOwnership(address)": "28360",
+        "vote(bytes,bytes32,bytes32,bytes32,bytes32)": "infinite"
+      }
+    }
+  },
+  "metadata": "{\"compiler\":{\"version\":\"0.8.28+commit.7893614a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_verifier\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_question\",\"type\":\"string\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"commitment\",\"type\":\"uint256\"}],\"name\":\"Voting__CommitmentAlreadyAdded\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Voting__EmptyTree\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Voting__InvalidProof\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Voting__InvalidRoot\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Voting__NotAllowedToVote\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"nullifierHash\",\"type\":\"bytes32\"}],\"name\":\"Voting__NullifierHashAlreadyUsed\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"NewLeaf\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"nullifierHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"vote\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"totalYes\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"totalNo\",\"type\":\"uint256\"}],\"name\":\"VoteCast\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"VoterAdded\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"voters\",\"type\":\"address[]\"},{\"internalType\":\"bool[]\",\"name\":\"statuses\",\"type\":\"bool[]\"}],\"name\":\"addVoters\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_voter\",\"type\":\"address\"}],\"name\":\"getVoterData\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"voter\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"registered\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getVotingData\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"question\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"contractOwner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"yesVotes\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"noVotes\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"size\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"depth\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"root\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"i_verifier\",\"outputs\":[{\"internalType\":\"contract IVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_commitment\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"_proof\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"_nullifierHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_root\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_vote\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_depth\",\"type\":\"bytes32\"}],\"name\":\"vote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"addVoters(address[],bool[])\":{\"details\":\"Only the contract owner can call this function. Emits `VoterAdded` for each updated entry.\",\"params\":{\"statuses\":\"True to allow, false to revoke\",\"voters\":\"Addresses to update in the allowlist\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"register(uint256)\":{\"details\":\"A given allowlisted address can register exactly once. Reverts if      the caller is not allowlisted or has already registered, or if the      same commitment has been previously inserted. Emits `NewLeaf`.\",\"params\":{\"_commitment\":\"The Poseidon-based commitment to insert into the IMT\"}},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"vote(bytes,bytes32,bytes32,bytes32,bytes32)\":{\"details\":\"Enforces single-use via `s_nullifierHashes`. Public inputs order must      match the circuit: nullifierHash, root, vote, depth. The `_vote`      value is interpreted as: 1 => yes, any other value => no. Emits `VoteCast`.\",\"params\":{\"_depth\":\"Tree depth used by the circuit\",\"_nullifierHash\":\"Unique nullifier to prevent double voting\",\"_proof\":\"Ultra Honk proof bytes\",\"_root\":\"Merkle root corresponding to the registered commitments tree\",\"_vote\":\"Encoded vote: 1 for yes, otherwise counted as no\"}}},\"version\":1},\"userdoc\":{\"errors\":{\"Voting__CommitmentAlreadyAdded(uint256)\":[{\"notice\":\"Errors //////\"}]},\"events\":{\"VoterAdded(address)\":{\"notice\":\"Events ///\"}},\"kind\":\"user\",\"methods\":{\"addVoters(address[],bool[])\":{\"notice\":\"Batch updates the allowlist of voter EOAs\"},\"getVotingData()\":{\"notice\":\"Getter Functions ///\"},\"register(uint256)\":{\"notice\":\"Registers a commitment leaf for an allowlisted address\"},\"vote(bytes,bytes32,bytes32,bytes32,bytes32)\":{\"notice\":\"Casts a vote using a zero-knowledge proof\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project/contracts/Voting.sol\":\"Voting\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\"npm/@zk-kit/lean-imt.sol@2.0.1/:poseidon-solidity/=npm/poseidon-solidity@0.0.5/\",\"project/:@openzeppelin/contracts/=npm/@openzeppelin/contracts@5.7.0/\",\"project/:@zk-kit/lean-imt.sol/=npm/@zk-kit/lean-imt.sol@2.0.1/\"]},\"sources\":{\"npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"]},\"npm/@openzeppelin/contracts@5.7.0/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"]},\"npm/@zk-kit/lean-imt.sol@2.0.1/Constants.sol\":{\"keccak256\":\"0xb1944a1d9f63069b2f22260935adb2d11546f82fbb7d12d853a90134a92f4b5b\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://6929c862576cb9dacaf21e514737c2f47cb6122cbee466b08c08aa62c028e68d\",\"dweb:/ipfs/QmZKaBc3gv9xVoAC8ETQYMdPdimuhn569nKUSTXqhSS4as\"]},\"npm/@zk-kit/lean-imt.sol@2.0.1/InternalLeanIMT.sol\":{\"keccak256\":\"0x06fb193da33416296beebb6fe4059d088ea8fa21f1ba0f724c329465be4d1ea9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://84a37f14d37893cec4d948f4d2a923bc1514a9ffa3dc4f790f652b4a0f0d2589\",\"dweb:/ipfs/QmcxM7Hx9n7P6th1S6wbJkYiixp157Via883jkpKZjA6vU\"]},\"npm/@zk-kit/lean-imt.sol@2.0.1/LeanIMT.sol\":{\"keccak256\":\"0x20b2eb309304bdb298923e3227b942e3cc7fd688ab383d55c164a0dcc5e78657\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ad783c9e9d4753a7d0d8e8ffed306e6d9d3df2a4ee04b2ec0bab06959748ca45\",\"dweb:/ipfs/QmawFRPEiE5W6Um46kqKktdRnqepku6pMkdMaoySj9rMNd\"]},\"npm/poseidon-solidity@0.0.5/PoseidonT3.sol\":{\"keccak256\":\"0x0102caa303bbc6690508f3615604f7730789ed990058c9513a87ccb30e4835be\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://1fe7291d5f998eaf7dfe37961b8a8e72f60cf79a7a34459efa5683ca3a702971\",\"dweb:/ipfs/QmQExqgvNEPKLq15rNygqmthUnAPWgTm4m3Bb5BCExwHF1\"]},\"project/contracts/Verifier.sol\":{\"keccak256\":\"0xe8e57f6cc018270772984451ad42ccc979356b7fec8a9a6e1917683ab2b8175a\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://efdeab166688154e751eaf4fcb6ed45a08604928afcdee9d5a67c583fce08c5a\",\"dweb:/ipfs/QmXC2qgSKjMeFoYxG2Ee5w7rYt5e2D6Rbr5N2PnJSxTXFG\"]},\"project/contracts/Voting.sol\":{\"keccak256\":\"0x5caa8a892a1bcab957f8c62c7a8def67f155b96fa55a5eb9d33c254373095eea\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://3804ba7eeb09a3177e51aa4902cf0983641afaf4c7dfad77f9d7aa212273356a\",\"dweb:/ipfs/QmdV1k2SU1AyvWQMBs9aUYnAWw9s7h9ct7szyMSNAjpaHE\"]}},\"version\":1}",
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 9694,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_question",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_string_storage"
+      },
+      {
+        "astId": 9698,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_voters",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 9700,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_yesVotes",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 9702,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_noVotes",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 9706,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_hasRegistered",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 9710,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_commitments",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_uint256,t_bool)"
+      },
+      {
+        "astId": 9713,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_tree",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_struct(LeanIMTData)201_storage"
+      },
+      {
+        "astId": 9717,
+        "contract": "project/contracts/Voting.sol:Voting",
+        "label": "s_nullifierHashes",
+        "offset": 0,
+        "slot": "11",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(LeanIMTData)201_storage": {
+        "encoding": "inplace",
+        "label": "struct LeanIMTData",
+        "members": [
+          {
+            "astId": 190,
+            "contract": "project/contracts/Voting.sol:Voting",
+            "label": "size",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 192,
+            "contract": "project/contracts/Voting.sol:Voting",
+            "label": "depth",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 196,
+            "contract": "project/contracts/Voting.sol:Voting",
+            "label": "sideNodes",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_uint256,t_uint256)"
+          },
+          {
+            "astId": 200,
+            "contract": "project/contracts/Voting.sol:Voting",
+            "label": "leaves",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_uint256,t_uint256)"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  },
+  "userdoc": {
+    "errors": {
+      "Voting__CommitmentAlreadyAdded(uint256)": [
+        {
+          "notice": "Errors //////"
+        }
+      ]
+    },
+    "events": {
+      "VoterAdded(address)": {
+        "notice": "Events ///"
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "addVoters(address[],bool[])": {
+        "notice": "Batch updates the allowlist of voter EOAs"
+      },
+      "getVotingData()": {
+        "notice": "Getter Functions ///"
+      },
+      "register(uint256)": {
+        "notice": "Registers a commitment leaf for an allowlisted address"
+      },
+      "vote(bytes,bytes32,bytes32,bytes32,bytes32)": {
+        "notice": "Casts a vote using a zero-knowledge proof"
+      }
+    },
+    "version": 1
+  },
+  "argsData": "0x000000000000000000000000b6038ce7a6b8666156d79317b02f56d1cd29ad07000000000000000000000000c97ed56b07509187c004dc12d5003ce0b449a9f10000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000003553686f756c64207765206275696c64206d6f7265206170707320746861742070726f7465637420766f74657220707269766163793f0000000000000000000000",
+  "libraries": {
+    "LeanIMT": "0xbb6d256aeed5de83a1a76d52c61ea67df4b691a9"
+  },
+  "transaction": {
+    "nonce": "0x48",
+    "hash": "0x03724bca5e2c347a56e7ad7cd6dd9092f85afa5a113273ab7be40d1e180b5e6e",
+    "origin": "0xb6038ce7a6b8666156d79317b02f56d1cd29ad07"
+  },
+  "receipt": {
+    "blockHash": "0xa74234e74602e3ebc8fb784b282febfb22ea285361242c75cb86b87b67120aa1",
+    "blockNumber": "0xb46e9c",
+    "transactionIndex": "0x7a"
+  }
+}
