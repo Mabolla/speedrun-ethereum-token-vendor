@@ -1,0 +1,57 @@
+name: Test and deploy Lending to Sepolia
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [agent/challenge-lending]
+    paths:
+      - .github/workflows/deploy-lending.yml
+      - packages/hardhat/contracts/Lending.sol
+      - packages/hardhat/contracts/Corn.sol
+      - packages/hardhat/contracts/CornDEX.sol
+      - packages/hardhat/contracts/MovePrice.sol
+      - packages/hardhat/deploy/04_deploy_lending.ts
+      - packages/hardhat/test/Lending*.ts
+      - packages/hardhat/scripts/checkOracleVerification.ts
+
+permissions:
+  contents: write
+
+concurrency:
+  group: speedrun-lending-sepolia
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: yarn workspaces focus @se-2/hardhat
+      - name: Run official Lending grading tests
+        run: yarn workspace @se-2/hardhat hardhat test test/Lending.ts --network hardhat
+      - name: Deploy only Lending contracts to Sepolia
+        env:
+          __RUNTIME_DEPLOYER_PRIVATE_KEY: ${{ secrets.SEPOLIA_DEPLOYER_PRIVATE_KEY }}
+        run: |
+          if [ -z "$__RUNTIME_DEPLOYER_PRIVATE_KEY" ]; then
+            echo "Existing Sepolia deployer secret is unavailable."
+            exit 1
+          fi
+          yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia --tags Lending
+      - name: Save deployment addresses and frontend ABIs
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/hardhat/deployments/sepolia packages/nextjs/contracts/deployedContracts.ts
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: save Lending Sepolia deployment"
+            git push
+          fi
+      - name: Verify Sepolia source on Etherscan
+        run: yarn hardhat:verify --network sepolia --min-interval 1500
+      - name: Confirm Lending sources and ABIs are verified
+        run: yarn workspace @se-2/hardhat node --import tsx scripts/checkOracleVerification.ts Corn CornDEX Lending MovePrice
