@@ -1744,7 +1744,9 @@ const deployedContracts = {
           type: "function",
         },
       ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        verify: "project/contracts/Verifier.sol",
+      },
       deployedOnBlock: 11824795,
     },
     LeanIMT: {
@@ -5741,7 +5743,11 @@ const deployedContracts = {
           type: "function",
         },
       ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        owner: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
+        renounceOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
+        transferOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
+      },
       deployedOnBlock: 11824792,
     },
     PredictionMarketTokenNo: {
@@ -8405,7 +8411,11 @@ const deployedContracts = {
           type: "function",
         },
       ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        owner: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
+        renounceOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
+        transferOwnership: "npm/@openzeppelin/contracts@5.7.0/access/Ownable.sol",
+      },
       deployedOnBlock: 11824796,
     },
     WhitelistOracle: {
