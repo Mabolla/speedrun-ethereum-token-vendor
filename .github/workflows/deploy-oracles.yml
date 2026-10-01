@@ -1,0 +1,53 @@
+name: Test and deploy Oracles to Sepolia
+
+on:
+  push:
+    branches: [agent/challenge-oracles]
+    paths:
+      - .github/workflows/deploy-oracles.yml
+      - packages/hardhat/contracts/00_Whitelist/**
+      - packages/hardhat/contracts/01_Staking/**
+      - packages/hardhat/contracts/02_Optimistic/**
+      - packages/hardhat/contracts/utils/StatisticsUtils.sol
+      - packages/hardhat/deploy/03_deploy_oracles.ts
+      - packages/hardhat/test/*Oracle*.ts
+
+permissions:
+  contents: write
+
+concurrency:
+  group: speedrun-oracles-sepolia
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: yarn workspaces focus @se-2/hardhat
+      - name: Run all official oracle grading tests
+        run: yarn workspace @se-2/hardhat hardhat test test/WhitelistOracle.ts test/StakingOracle.ts test/OptimisticOracle.ts --network hardhat
+      - name: Deploy only oracle challenge contracts to Sepolia
+        env:
+          __RUNTIME_DEPLOYER_PRIVATE_KEY: ${{ secrets.SEPOLIA_DEPLOYER_PRIVATE_KEY }}
+        run: |
+          if [ -z "$__RUNTIME_DEPLOYER_PRIVATE_KEY" ]; then
+            echo "Existing Sepolia deployer secret is unavailable."
+            exit 1
+          fi
+          yarn workspace @se-2/hardhat hardhat deploy --no-compile --skip-prompts --network sepolia --tags Oracles
+      - name: Save deployment addresses and frontend ABIs
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/hardhat/deployments/sepolia packages/nextjs/contracts/deployedContracts.ts
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: save Oracles Sepolia deployment"
+            git push
+          fi
+      - name: Verify Sepolia source on Etherscan
+        run: yarn hardhat:verify --network sepolia
