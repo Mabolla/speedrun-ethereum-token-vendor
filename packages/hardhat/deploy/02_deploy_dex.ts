@@ -8,7 +8,11 @@ export default deployScript(
   async ({ deploy, execute, read, namedAccounts, network }) => {
     const { deployer } = namedAccounts;
     const balloons = await deploy("Balloons", { account: deployer, artifact: artifacts.Balloons, args: [] });
-    const dex = await deploy("DEX", { account: deployer, artifact: artifacts.DEX, args: [balloons.address] });
+    const dex = await deploy("DEX", {
+      account: deployer,
+      artifact: artifacts.contracts_DEX_sol_DEX,
+      args: [balloons.address],
+    });
 
     if ((await read(dex, { functionName: "totalLiquidity" })) === 0n) {
       const isLocal = network.chain.id === 31337;
