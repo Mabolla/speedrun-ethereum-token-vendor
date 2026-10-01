@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Curve } from "./_components";
 import { Address, AddressInput, Balance, EtherInput } from "@scaffold-ui/components";
 import { IntegerInput } from "@scaffold-ui/debug-contracts";
 import { useWatchBalance } from "@scaffold-ui/hooks";
 import type { NextPage } from "next";
-import Link from "next/link";
 import { Address as AddressType, formatEther, isAddress, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useDeployedContractInfo, useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
